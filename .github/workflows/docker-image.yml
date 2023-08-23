@@ -1,0 +1,18 @@
+name: Docker Image CI
+
+on: # Contiene las condicionantes para detonar este action.
+  push: # Se detona el action en el push de las ramas posteriores.
+    branches: [ "main" ]
+  pull_request:  # Se detona el action en el push_request de las ramas posteriores.
+    branches: [ "main" ]
+
+jobs: # Definimos los jobs (pasos) que llevaraá a cabo el action (pipeline)
+
+  build: # Definimos un nombre a un job, en este caso 'build' (como el service de docker compose).
+
+    runs-on: ubuntu-latest # Donde se va a ejecutar, en una instancia de ubuntu con paquetes necesarios instalados (por ejemplo docker).
+
+    steps: # Pasos que se llevarán a cabo en este job.
+    - uses: actions/checkout@v3 # 'Uses' necesarios, básicamente es un repositorio con configuraciones para poder trabajar el action como necesitemos.
+    - name: Build the Docker image # Nombre del paso.
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s) # Comando que se ejecutará en el Pipeline.
