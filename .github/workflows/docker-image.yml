@@ -19,7 +19,7 @@ jobs: # Definimos los jobs (pasos) que llevaraá a cabo el action (pipeline)
       with:
         fetch-depth: 0
 
-    - name: Docker Login
+    - name: Docker login
       env: # Declaramos variables
         DOCKER_USER: ${{ secrets.DOCKER_USER }} # Obtener variables de secret.
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -27,6 +27,20 @@ jobs: # Definimos los jobs (pasos) que llevaraá a cabo el action (pipeline)
         echo "Iniciando login..."
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
         echo "Fin del login!"
+
+    - name: Build Docker image
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }} 
+      run: |
+        echo "Construyendo imagen de Docker"
+        docker build -t $DOCKER_USER/docker-graphql:0.0.2 .
+
+    - name: Push Docker image
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }} 
+      run: |
+        echo "Construyendo imagen de Docker"
+        docker push -t $DOCKER_USER/docker-graphql:0.0.2
 
     
     # - name: Build the Docker image # Nombre del paso.
