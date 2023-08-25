@@ -19,10 +19,19 @@ jobs: # Definimos los jobs (pasos) que llevaraá a cabo el action (pipeline)
       with:
         fetch-depth: 0
 
+    - name: Git Semantic Version
+      uses: PaulHatch/semantic-version@v4.3.0
+      with:
+        major_pattern: "major:" # Si se encuentra el texto major: en el commit.
+        min_pattern: "feat:" # Si se encuentra el texto feat: en el commit.
+        format: "${major}.${minor}.${patch}-prerelease${increment}" # Especificamos el formato del versionamiento.
+      id: version
+
     - name: Docker login
       env: # Declaramos variables
         DOCKER_USER: ${{ secrets.DOCKER_USER }} # Obtener variables de secret.
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        NEW_VERSION: ${{ steps.version.output.version }} # Obtenemos el output del step con id version.
       run: | # El usar el simbolo | significa que ejecutaremos comandos por separado.
         echo "Iniciando login..."
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
@@ -31,19 +40,20 @@ jobs: # Definimos los jobs (pasos) que llevaraá a cabo el action (pipeline)
     - name: Build Docker image
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }} 
+        NEW_VERSION: ${{ steps.version.output.version }} # Obtenemos el output del step con id version.
       run: |
         echo "Construyendo imagen de Docker"
-        docker build -t $DOCKER_USER/docker-graphql:0.0.2 .
-        docker build -t $DOCKER_USER/docker-graphql:latest
+        docker build -t $DOCKER_USER/docker-graphql:$NEW_VERSION .
+        docker build -t $DOCKER_USER/docker-graphql:latest .
 
     - name: Push Docker image
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }} 
+        NEW_VERSION: ${{ steps.version.output.version }} # Obtenemos el output del step con id version.
       run: |
         echo "Cargando imagen en Docker Hub"
-        docker push $DOCKER_USER/docker-graphql:0.0.2
+        docker push $DOCKER_USER/docker-graphql:$NEW_VERSION
         docker push $DOCKER_USER/docker-graphql:latest
 
-    
     # - name: Build the Docker image # Nombre del paso.
     #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s) # Comando que se ejecutará en el Pipeline.
