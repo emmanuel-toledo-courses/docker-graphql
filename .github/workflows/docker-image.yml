@@ -20,7 +20,7 @@ jobs: # Definimos los jobs (pasos) que llevaraá a cabo el action (pipeline)
         fetch-depth: 0
 
     - name: Git Semantic Version
-      uses: paulhatch/semantic-version@v4.3.0
+      uses: paulhatch/semantic-version@v4.0.2
       with:
         major_pattern: "major:" # Si se encuentra el texto major: en el commit.
         min_pattern: "feat:" # Si se encuentra el texto feat: en el commit.
