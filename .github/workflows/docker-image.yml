@@ -39,8 +39,8 @@ jobs: # Definimos los jobs (pasos) que llevaraá a cabo el action (pipeline)
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }} 
       run: |
-        echo "Construyendo imagen de Docker"
-        docker push -t $DOCKER_USER/docker-graphql:0.0.2
+        echo "Cargando imagen en Docker Hub"
+        docker push $DOCKER_USER/docker-graphql:0.0.2
 
     
     # - name: Build the Docker image # Nombre del paso.
